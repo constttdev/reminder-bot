@@ -17,6 +17,9 @@ importers:
       fs:
         specifier: 0.0.1-security
         version: 0.0.1-security
+      node-json-db:
+        specifier: ^2.3.1
+        version: 2.3.1
       path:
         specifier: ^0.12.7
         version: 0.12.7
@@ -156,6 +159,9 @@ packages:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
 
+  node-json-db@2.3.1:
+    resolution: {integrity: sha512-cZ0HGQuMUhMg9iGLgS7eOGK5gGYfAyEsPXMD16mcHvUNhMMtOxgUAMuiCED7qh+c2IOeN/6l9FXUCgnGtXvLIA==}
+
   object-inspect@1.13.3:
     resolution: {integrity: sha512-kDCGIbxkDSXE3euJZZXzc6to7fCrKHNI/hSRQnRuQ+BWjFNzZwiFF8fj/6o2t2G9/jTj8PSIYTfCLelLZEeRpA==}
     engines: {node: '>= 0.4'}
@@ -173,6 +179,9 @@ packages:
   qs@6.13.1:
     resolution: {integrity: sha512-EJPeIn0CYrGu+hli1xilKAPXODtJ12T0sP63Ijx2/khC2JtuaN3JyNIpvmnkmaEtha9ocbG4A4cMcr+TvqvwQg==}
     engines: {node: '>=0.6'}
+
+  rwlock@5.0.0:
+    resolution: {integrity: sha512-XgzRqLMfCcm9QfZuPav9cV3Xin5TRcIlp4X/SH3CvB+x5D2AakdlEepfJKDd8ByncvfpcxNWdRZVUl38PS6ZJg==}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -378,6 +387,10 @@ snapshots:
 
   math-intrinsics@1.1.0: {}
 
+  node-json-db@2.3.1:
+    dependencies:
+      rwlock: 5.0.0
+
   object-inspect@1.13.3: {}
 
   path@0.12.7:
@@ -392,6 +405,8 @@ snapshots:
   qs@6.13.1:
     dependencies:
       side-channel: 1.1.0
+
+  rwlock@5.0.0: {}
 
   side-channel-list@1.0.0:
     dependencies:
