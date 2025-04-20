@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { pathToFileURL } from "url";
 import { startReminderLoop } from "./lifecycle";
+import { tryCatchFile } from "./db";
+
+await tryCatchFile();
 
 dotenv.config();
 
