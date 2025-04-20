@@ -4,6 +4,7 @@ import { Client, GatewayIntentBits, Partials } from "discord.js";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { pathToFileURL } from "url";
+import { startReminderLoop } from "./lifecycle";
 
 dotenv.config();
 
@@ -36,9 +37,7 @@ async function loadCommands() {
 
     for (const folder of commandFolders) {
         const commandsPath = path.join(foldersPath, folder);
-        const commandFiles = fs
-            .readdirSync(commandsPath)
-            .filter((file) => file.endsWith(".ts"));
+        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".ts"));
         for (const file of commandFiles) {
             const filePath = path.join(commandsPath, file);
             await import(pathToFileURL(filePath).href).then((command) => {
@@ -56,9 +55,7 @@ async function loadCommands() {
 
 async function loadEvents() {
     const eventsPath = path.join(__dirname, "events");
-    const eventFiles = fs
-        .readdirSync(eventsPath)
-        .filter((file) => file.endsWith(".ts"));
+    const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith(".ts"));
     for (const file of eventFiles) {
         const filePath = path.join(eventsPath, file);
         await import(pathToFileURL(filePath).href).then((event) => {
@@ -76,6 +73,7 @@ async function loadAllModules() {
     await loadEvents();
     const token = String(process.env.TOKEN);
     client.login(token);
+    startReminderLoop();
 }
 
 loadAllModules().catch(console.error);
