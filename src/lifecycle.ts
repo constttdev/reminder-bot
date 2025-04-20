@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import client from "./index";
 import { EmbedBuilder } from "discord.js";
-import { db } from "./db";
+import { db } from "./services/db";
 
 async function repeatWithTimingControl(fn) {
     while (true) {
