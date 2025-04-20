@@ -29,12 +29,12 @@ importers:
       path:
         specifier: ^0.12.7
         version: 0.12.7
+      ulid:
+        specifier: ^3.0.0
+        version: 3.0.0
       url:
         specifier: ^0.11.4
         version: 0.11.4
-      uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.0
@@ -697,6 +697,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  ulid@3.0.0:
+    resolution: {integrity: sha512-yvZYdXInnJve6LdlPIuYmURdS2NP41ZoF4QW7SXwbUKYt53+0eDAySO+rGSvM2O/ciuB/G+8N7GQrZ1mCJpuqw==}
+    hasBin: true
+
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
@@ -713,10 +717,6 @@ packages:
 
   util@0.10.4:
     resolution: {integrity: sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==}
-
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
-    hasBin: true
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -1432,6 +1432,8 @@ snapshots:
 
   typescript@5.8.3: {}
 
+  ulid@3.0.0: {}
+
   undici-types@6.20.0: {}
 
   undici@6.19.8: {}
@@ -1448,8 +1450,6 @@ snapshots:
   util@0.10.4:
     dependencies:
       inherits: 2.0.3
-
-  uuid@11.1.0: {}
 
   which@2.0.2:
     dependencies:
