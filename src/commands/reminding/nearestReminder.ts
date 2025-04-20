@@ -1,11 +1,12 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { removeAllReminders } from "../../controller/reminder";
+import { getNearestReminder } from "../../controller/reminder";
 
 export const data = new SlashCommandBuilder()
-    .setName("removeallreminders")
-    .setDescription("Removes all your reminders");
+    .setName("nearesttreminder")
+    .setDescription("Displays the nearest reminder");
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
-    removeAllReminders(interaction);
+
+    getNearestReminder(interaction);
 }
