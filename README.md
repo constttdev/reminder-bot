@@ -1,16 +1,3 @@
-# DiscordJS Bot Template
+# Reminder Bot
 
-### Commands
-
-Start the bot
-
-- `pnpm run start`
-
-Register commands
-
-- `pnpm run registercmds`
-
-### Features
-
-- Command and Event Handling
-- Example Command and example Event
+An simple discord bot that reminds the user after an specific amount of time.
