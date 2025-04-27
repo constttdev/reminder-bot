@@ -2,8 +2,9 @@ import * as chrono from "chrono-node";
 import { ulid } from "ulid";
 import { sendServerEmbed } from "./embed";
 import { ChatInputCommandInteraction } from "discord.js";
-import { db } from "../services/db";
-import fs from "fs/promises";
+import PocketBase from "pocketbase";
+
+const pb = new PocketBase("https://reminder-bot.db.constt.de");
 
 /**
  * ## Creates an Reminder
@@ -46,11 +47,13 @@ export async function createReminder(
             id: reminderId,
             reminder,
             remindAt: Number(new Date(chronoTime).getTime()),
-            createdTime: Date.now(),
+            createdAt: Date.now(),
             userId: interaction.user.id,
         };
 
-        await db.push(`/reminders/${interaction.user.id}/${reminderId}`, reminderData);
+        console.log(`data: ${JSON.stringify(reminderData)}`);
+
+        await pb.collection("reminders").create(reminderData);
 
         return await sendServerEmbed(interaction, "Added reminder", undefined, [
             {
@@ -79,7 +82,7 @@ export async function createReminder(
  */
 export async function removeReminder(interaction: ChatInputCommandInteraction, reminderId: string) {
     try {
-        await db.delete(`/reminders/${interaction.user.id}/${reminderId}`);
+        await pb.collection("reminders").delete(reminderId);
         return await sendServerEmbed(interaction, "Removed Reminder", undefined, [
             {
                 name: "Sucesfully removed an reminders",
@@ -106,7 +109,13 @@ export async function removeReminder(interaction: ChatInputCommandInteraction, r
  */
 export async function removeAllReminders(interaction: ChatInputCommandInteraction) {
     try {
-        await db.delete(`/reminders/${interaction.user.id}`);
+        const resultList = await pb.collection("reminders").getList(1, 500, {
+            filter: `userId = ${interaction.user.id}`,
+        });
+
+        resultList.items.forEach(async (item) => {
+            await pb.collection("reminders").delete(item.id);
+        });
 
         return await sendServerEmbed(interaction, "Removed all reminders", undefined, [
             {
@@ -129,26 +138,11 @@ export async function removeAllReminders(interaction: ChatInputCommandInteractio
 
 export async function getAllReminders(interaction: ChatInputCommandInteraction) {
     try {
-        const userId = interaction.user.id;
+        const resultList = await pb.collection("reminders").getList(1, 500, {
+            filter: `userId = ${interaction.user.id}`,
+        });
 
-        const jsonText = await fs.readFile("reminders.json", "utf-8");
-
-        const jsonData = JSON.parse(jsonText) as {
-            reminders: {
-                [userId: string]: {
-                    [reminderId: string]: {
-                        id: string;
-                        reminder: string;
-                        remindAt: number;
-                        createdTime: number;
-                        userId: string;
-                    };
-                };
-            };
-        };
-
-        const userReminders = jsonData.reminders[userId];
-        if (!userReminders) {
+        if (!resultList.items) {
             return await sendServerEmbed(interaction, "No reminders", undefined, [
                 {
                     name: "You currently got no reminders",
@@ -158,17 +152,11 @@ export async function getAllReminders(interaction: ChatInputCommandInteraction) 
             ]);
         }
 
-        const reminderKeys = Object.keys(userReminders);
-
-        const embedFields = reminderKeys.map((reminderKey) => {
-            const reminder = userReminders[reminderKey];
-
-            return {
-                name: `${reminder.reminder}`,
-                value: `<t:${(reminder.remindAt / 1000).toFixed(0)}:R> | \`${reminder.id}\``,
-                inline: false,
-            };
-        });
+        const embedFields = resultList.items.map((reminder) => ({
+            name: `${reminder.reminder}`,
+            value: `<t:${(reminder.remindAt / 1000).toFixed(0)}:R> | \`${reminder.id}\``,
+            inline: false,
+        }));
 
         return await sendServerEmbed(interaction, "Your reminders", undefined, embedFields);
     } catch (error) {
@@ -185,26 +173,11 @@ export async function getAllReminders(interaction: ChatInputCommandInteraction) 
 
 export async function getNearestReminder(interaction: ChatInputCommandInteraction) {
     try {
-        const userId = interaction.user.id;
+        const resultList = await pb.collection("reminders").getList(1, 500, {
+            filter: `userId = ${interaction.user.id}`,
+        });
 
-        const jsonText = await fs.readFile("reminders.json", "utf-8");
-
-        const jsonData = JSON.parse(jsonText) as {
-            reminders: {
-                [userId: string]: {
-                    [reminderId: string]: {
-                        id: string;
-                        reminder: string;
-                        remindAt: number;
-                        createdTime: number;
-                        userId: string;
-                    };
-                };
-            };
-        };
-
-        const userReminders = jsonData.reminders[userId];
-        if (!userReminders) {
+        if (!resultList.items || resultList.items.length === 0) {
             return await sendServerEmbed(interaction, "No reminders", undefined, [
                 {
                     name: "You currently got no reminders",
@@ -214,19 +187,13 @@ export async function getNearestReminder(interaction: ChatInputCommandInteractio
             ]);
         }
 
-        const reminderKeys = Object.keys(userReminders);
+        let nearestReminder = resultList.items[0];
 
-        let nearestReminder = jsonData.reminders[userId][reminderKeys[0]];
-
-        reminderKeys.forEach((reminderKey) => {
-            const reminder = jsonData.reminders[userId][reminderKey];
-
-            if (reminder.remindAt < nearestReminder.createdTime) {
+        resultList.items.forEach((reminder) => {
+            if (reminder.remindAt < nearestReminder.remindAt) {
                 nearestReminder = reminder;
             }
         });
-
-        console.log(`${nearestReminder}`);
 
         return await sendServerEmbed(interaction, "Nearest Reminder", undefined, [
             {
